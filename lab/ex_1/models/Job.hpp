@@ -16,7 +16,7 @@ private:
     long EndT_;
 
 public:
-    Job();
+    Job(int id, long ProcT);
     ~Job();
     /* Setters and getters */
     // id

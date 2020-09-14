@@ -1,6 +1,7 @@
 #include "Job.hpp"
 
-Job::Job()
+Job::Job(int id, long ProcT)
+    : id_(id), ProcT_(ProcT)
 {
 }
 

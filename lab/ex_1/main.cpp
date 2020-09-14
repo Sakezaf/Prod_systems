@@ -14,16 +14,14 @@ int main(int argc, char const *argv[])
     std::cout << "Demo program for scheduling." << std::endl;
     std::cout << "Please give me the number of jobs: ";
     std::cin >> NJ;
+    jobs.reserve(NJ);
 
     // Ad-hoc scheduling.
     std::cout << "Ad-hoc scheduling" << std::endl;
     for (int i = 0; i < NJ; i++)
     {
-        std::unique_ptr<Job> temp = std::make_unique<Job>();
-        temp->id() = i;
-        temp->ProcT() = 1 + rand() % 100;
         s.push_back(i);
-        jobs.push_back(std::move(temp));
+        jobs.emplace_back(std::make_unique<Job>(i, 1 + rand() % 100));
     }
 
     Simulate(&jobs, &s, 0);
