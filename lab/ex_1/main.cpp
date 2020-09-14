@@ -15,12 +15,13 @@ int main(int argc, char const *argv[])
     std::cout << "Please give me the number of jobs: ";
     std::cin >> NJ;
     jobs.reserve(NJ);
+    s.reserve(NJ);
 
     // Ad-hoc scheduling.
     std::cout << "Ad-hoc scheduling" << std::endl;
     for (int i = 0; i < NJ; i++)
     {
-        s.push_back(i);
+        s.emplace_back(i);
         jobs.emplace_back(std::make_unique<Job>(i, 1 + rand() % 100));
     }
 
