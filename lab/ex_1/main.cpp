@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
     int NJ;
     std::vector<std::unique_ptr<Job>> jobs;
     std::vector<int> s;
-    double obj_f[3];
+    std::array<double, 3> obj_f;
 
     std::cout << "Demo program for scheduling." << std::endl;
     std::cout << "Please give me the number of jobs: ";
@@ -26,13 +26,13 @@ int main(int argc, char const *argv[])
     }
 
     Simulate(&jobs, &s, 0);
-    Evaluate(&jobs, obj_f);
+    obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
 
     // SPT scheduling.
     std::cout << "SPT scheduling" << std::endl;
     SPT_rule(&jobs, &s);
-    Evaluate(&jobs, obj_f);
+    obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
 
     return 0;
@@ -51,7 +51,7 @@ void Simulate(std::vector<std::unique_ptr<Job>> *jobs, std::vector<int> *s, long
     }
 }
 
-void Evaluate(std::vector<std::unique_ptr<Job>> *jobs, double obj_func[3])
+std::array<double, 3> Evaluate(std::vector<std::unique_ptr<Job>> *jobs)
 {
     double Na;
     double Cmax;
@@ -69,12 +69,11 @@ void Evaluate(std::vector<std::unique_ptr<Job>> *jobs, double obj_func[3])
 
     Na = Csum / Cmax;
 
-    obj_func[0] = Cmax;
-    obj_func[1] = Csum;
-    obj_func[2] = Na;
+    std::array<double, 3> obj_func = {Cmax, Csum, Na};
+    return obj_func;
 }
 
-void print_obj_func(double obj_func[3])
+void print_obj_func(std::array<double, 3> obj_func)
 {
     std::cout << "Cmax = " << obj_func[0] << std::endl;
     std::cout << "Csum = " << obj_func[1] << std::endl;

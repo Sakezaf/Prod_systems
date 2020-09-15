@@ -26,16 +26,16 @@ void Simulate(std::vector<std::unique_ptr<Job>> *jobs, std::vector<int> *s, long
  * Csum: Sum of job completion time. 
  * 
  * @param jobs Vector of unique pointers to processed jobs.
- * @param obj_func Array containing Na, Cmax and Csum.
+ * @return Array of Cmax, Csum, Na
  */
-void Evaluate(std::vector<std::unique_ptr<Job>> *jobs, double obj_func[3]);
+std::array<double, 3> Evaluate(std::vector<std::unique_ptr<Job>> *jobs);
 
 /**
  * Print out Evaluated details of the simulation.
  * 
- * @param obj_func A double array containing the details.
+ * @param obj_func A double std::array with the size of 3 containing the details.
  */
-void print_obj_func(double obj_func[3]);
+void print_obj_func(std::array<double, 3> obj_func);
 
 /**
  * Create schedule using the SPT (Shortest Processing Time) rule.
