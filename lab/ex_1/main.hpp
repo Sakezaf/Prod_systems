@@ -16,7 +16,6 @@
  * Change-over time is contained in processing time.
  * 
  * @param jobs Vector of unique pointers to jobs to be processed.
- * @param s Schedule, a vector of integers, which must be the same lenght as jobs.
  * @param t0 Start of processing.
  */
 void Simulate(std::vector<std::unique_ptr<Job>> *jobs, long t0);
@@ -43,6 +42,5 @@ void print_obj_func(std::array<double, 3> obj_func);
  * Create schedule using the SPT (Shortest Processing Time) rule.
  * 
  * @param jobs Vector of unique pointers to jobs to be processed.
- * @param s Schedule, a vector of integers, which must be the same lenght as jobs.
  */
 void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs);
