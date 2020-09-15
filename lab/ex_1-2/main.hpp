@@ -6,8 +6,8 @@
 
 /**
  * Program for demonstrating the use of scheduling in a singular manufacturing cell.
- * Goal: Descreasing the usual inventory level.
- * Solution: SPT scheduling.
+ * Goal: Decreasing usual inventory levels.
+ * Solution: SPT scheduling. That includes changing the schedule by sorting by increasing processing time.
  */
 
 /**
