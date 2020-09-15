@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include "models/Job.hpp"
+
 /**
  * Program for demonstrating the use of scheduling in a singular manufacturing cell.
  * Goal: Descreasing the usual inventory level.
@@ -17,7 +19,7 @@
  * @param s Schedule, a vector of integers, which must be the same lenght as jobs.
  * @param t0 Start of processing.
  */
-void Simulate(std::vector<std::unique_ptr<Job>> *jobs, std::vector<int> *s, long t0);
+void Simulate(std::vector<std::unique_ptr<Job>> *jobs, long t0);
 
 /**
  * Evaluate the simulation.
@@ -43,4 +45,13 @@ void print_obj_func(std::array<double, 3> obj_func);
  * @param jobs Vector of unique pointers to jobs to be processed.
  * @param s Schedule, a vector of integers, which must be the same lenght as jobs.
  */
-void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs, std::vector<int> *s);
+void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs);
+
+/**
+ * Compare jobs by processing time.
+ * 
+ * @param a unique pointer of job "a".
+ * @param b unique pointer of job "b".
+ * @return Is a.ProcT smaller than b.ProcT
+ */
+bool cmp_by_ProcT(const std::unique_ptr<Job> &a, const std::unique_ptr<Job> &b);
