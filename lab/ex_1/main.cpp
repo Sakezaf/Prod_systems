@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
     jobs.reserve(NJ);
 
     // Ad-hoc scheduling.
-    std::cout << "Ad-hoc scheduling" << std::endl;
+    std::cout << "\nAd-hoc scheduling" << std::endl;
     for (int i = 0; i < NJ; i++)
     {
         jobs.emplace_back(std::make_unique<Job>(i, 1 + rand() % 100));
@@ -25,26 +25,29 @@ int main(int argc, char const *argv[])
     Simulate(&jobs, 0);
     obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
+    print_jobs(&jobs);
 
     // SPT scheduling.
-    std::cout << "SPT scheduling" << std::endl;
+    std::cout << "\nSPT scheduling" << std::endl;
     SPT_rule(&jobs);
+    Simulate(&jobs, 0);
     obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
+    print_jobs(&jobs);
 
     return 0;
 }
 
 void Simulate(std::vector<std::unique_ptr<Job>> *jobs, long t0)
 {
-    for (int pos = 0; pos < jobs->size(); pos++)
+    for (std::vector<std::unique_ptr<Job>>::iterator job = jobs->begin(); job != jobs->end(); job++)
     {
-        if (pos == 0)
-            jobs->at(pos)->StartT() = t0;
+        if (std::distance(jobs->begin(), job) == 0)
+            job->get()->StartT() = t0;
         else
-            jobs->at(pos)->StartT() = jobs->at(pos)->EndT();
+            job->get()->StartT() = jobs->at(std::distance(jobs->begin(), job) - 1)->EndT();
 
-        jobs->at(pos)->EndT() = jobs->at(pos)->StartT() + jobs->at(pos)->ProcT();
+        job->get()->EndT() = job->get()->StartT() + job->get()->ProcT();
     }
 }
 
@@ -84,4 +87,13 @@ void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs)
     std::sort(jobs->begin(), jobs->end(), [](const std::unique_ptr<Job> &a, const std::unique_ptr<Job> &b) {
         return a->ProcT() < b->ProcT();
     });
+}
+
+void print_jobs(std::vector<std::unique_ptr<Job>> *jobs)
+{
+    std::cout << "\n#\tid\tstart\ttime\tend" << std::endl;
+    for (std::vector<std::unique_ptr<Job>>::iterator job = jobs->begin(); job != jobs->end(); job++)
+    {
+        std::cout << std::distance(jobs->begin(), job) + 1 << "\t" << job->get()->id() << "\t" << job->get()->StartT() << "\t" << job->get()->ProcT() << "\t" << job->get()->EndT() << std::endl;
+    }
 }

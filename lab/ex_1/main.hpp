@@ -44,3 +44,5 @@ void print_obj_func(std::array<double, 3> obj_func);
  * @param jobs Vector of unique pointers to jobs to be processed.
  */
 void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs);
+
+void print_jobs(std::vector<std::unique_ptr<Job>> *jobs);
