@@ -32,11 +32,6 @@ int main(int argc, char const *argv[])
     obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
 
-    for (auto &job : jobs)
-    {
-        std::cout << job->ProcT() << std::endl;
-    }
-
     return 0;
 }
 
