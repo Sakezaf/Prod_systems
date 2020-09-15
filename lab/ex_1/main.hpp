@@ -46,12 +46,3 @@ void print_obj_func(std::array<double, 3> obj_func);
  * @param s Schedule, a vector of integers, which must be the same lenght as jobs.
  */
 void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs);
-
-/**
- * Compare jobs by processing time.
- * 
- * @param a unique pointer of job "a".
- * @param b unique pointer of job "b".
- * @return Is a.ProcT smaller than b.ProcT
- */
-bool cmp_by_ProcT(const std::unique_ptr<Job> &a, const std::unique_ptr<Job> &b);

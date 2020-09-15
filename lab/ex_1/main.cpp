@@ -77,14 +77,11 @@ void print_obj_func(std::array<double, 3> obj_func)
     std::cout << "WIP = " << obj_func[2] << std::endl;
 }
 
-bool cmp_by_ProcT(const std::unique_ptr<Job> &a, const std::unique_ptr<Job> &b)
-{
-    return a->ProcT() < b->ProcT();
-}
-
 void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs)
 {
     // Sort by non-descending ProcT.
 
-    std::sort(jobs->begin(), jobs->end(), cmp_by_ProcT);
+    std::sort(jobs->begin(), jobs->end(), [](const std::unique_ptr<Job> &a, const std::unique_ptr<Job> &b) {
+        return a->ProcT() < b->ProcT();
+    });
 }
