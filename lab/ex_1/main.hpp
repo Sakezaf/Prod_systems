@@ -45,4 +45,9 @@ void print_obj_func(std::array<double, 3> obj_func);
  */
 void SPT_rule(std::vector<std::unique_ptr<Job>> *jobs);
 
+/**
+ * Print jobs as a tab separated list to console.
+ * 
+ * @param jobs Pointer to a vector of unique pointers of jobs.
+ */
 void print_jobs(std::vector<std::unique_ptr<Job>> *jobs);
