@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     int NR;
     bool table = false;
     std::vector<std::shared_ptr<Job>> jobs;
-    std::vector<std::shared_ptr<Machine>> machines;
+    std::vector<std::unique_ptr<Machine>> machines;
     std::array<double, 4> obj_f;
 
     if (argc > 1)
@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
 
     for (int i = 0; i < NR; i++)
     {
-        machines.emplace_back(std::make_shared<Machine>(i));
+        machines.emplace_back(std::make_unique<Machine>(i));
     }
 
     // Ad-hoc scheduling.
@@ -76,23 +76,24 @@ int main(int argc, char const *argv[])
     if (table)
     {
         print_jobs(&jobs);
-        print_resources(machines);
+        print_resources(&machines);
     }
 
     return 0;
 }
 
-void print_resources(std::vector<std::shared_ptr<Machine>> machines)
+void print_resources(std::vector<std::unique_ptr<Machine>> *machines)
 {
-    std::cout << "Machines\nid\tl" << std::endl;
-    for (auto &machine : machines)
+    std::cout << "Machines\n#\tid\tl" << std::endl;
+    for (int i = 0; i < machines->size(); i++)
     {
-        std::cout << machine->id() << "\t"
-                  << machine->jobs().size() << std::endl;
+        std::cout << i + 1 << "\t"
+                  << machines->at(i)->id() << "\t"
+                  << machines->at(i)->jobs().size() << std::endl;
     }
 }
 
-void Simulation_P(std::vector<std::shared_ptr<Machine>> *machines, long t0)
+void Simulation_P(std::vector<std::unique_ptr<Machine>> *machines, long t0)
 {
     // threads for parallel excecution for better runtimes.
     std::vector<std::thread> threads;
@@ -111,14 +112,13 @@ void Simulation_P(std::vector<std::shared_ptr<Machine>> *machines, long t0)
     }
 }
 
-void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::shared_ptr<Machine>> *machines)
+void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::unique_ptr<Machine>> *machines)
 {
     SPT_rule(jobs);
 
     for (int i = 0; i < jobs->size(); i++)
     {
-        auto selected_resource = machines->at(i % machines->size());
-        selected_resource->jobs().push_back(jobs->at(i));
+        machines->at(i % machines->size())->jobs().push_back(jobs->at(i));
     }
 }
 
