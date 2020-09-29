@@ -77,7 +77,7 @@ void EDD_rule(std::vector<std::shared_ptr<Job>> *jobs);
  * @param jobs Vector of jobs to be processed.
  * @param machines Vector of machines.
  */
-void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::unique_ptr<Machine>> *machines);
+void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::unique_ptr<Machine>> *resources);
 
 /**
  * Simulates execution on multiple parallel machines.
@@ -85,11 +85,11 @@ void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::unique_
  * @param machines Vector of machines.
  * @param t0 start time.
  */
-void Simulation_P(std::vector<std::unique_ptr<Machine>> *machines, long t0);
+void Simulation_P(std::vector<std::unique_ptr<Machine>> *resources, long t0);
 
 /**
  * Print data of all machines/resources.
  * 
  * @param machines Vector of machines.
  */
-void print_resources(std::vector<std::unique_ptr<Machine>> *machines);
+void print_resources(std::vector<std::unique_ptr<Machine>> *resources);

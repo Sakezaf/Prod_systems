@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     int NR;
     bool table = false;
     std::vector<std::shared_ptr<Job>> jobs;
-    std::vector<std::unique_ptr<Machine>> machines;
+    std::vector<std::unique_ptr<Machine>> resources;
     std::array<double, 4> obj_f;
 
     if (argc > 1)
@@ -26,10 +26,10 @@ int main(int argc, char const *argv[])
     std::cout << "Demo program for scheduling." << std::endl;
     std::cout << "Please give me the number of jobs: ";
     std::cin >> NJ;
-    std::cout << "Please give me the number of machines: ";
+    std::cout << "Please give me the number of resources: ";
     std::cin >> NR;
     jobs.reserve(NJ);
-    machines.reserve(NR);
+    resources.reserve(NR);
 
     for (int i = 0; i < NJ; i++)
     {
@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
 
     for (int i = 0; i < NR; i++)
     {
-        machines.emplace_back(std::make_unique<Machine>(i));
+        resources.emplace_back(std::make_unique<Machine>(i));
     }
 
     // Ad-hoc scheduling.
@@ -69,42 +69,42 @@ int main(int argc, char const *argv[])
 
     // MSPT
     std::cout << "\nMSPT scheduling" << std::endl;
-    MSPT_rule(&jobs, &machines);
-    Simulation_P(&machines, 0);
+    MSPT_rule(&jobs, &resources);
+    Simulation_P(&resources, 0);
     obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
     if (table)
     {
         print_jobs(&jobs);
-        print_resources(&machines);
+        print_resources(&resources);
     }
 
     return 0;
 }
 
-void print_resources(std::vector<std::unique_ptr<Machine>> *machines)
+void print_resources(std::vector<std::unique_ptr<Machine>> *resources)
 {
-    std::cout << "Machines\n#\tid\tl" << std::endl;
-    for (int i = 0; i < machines->size(); i++)
+    std::cout << "resources\n#\tid\tl" << std::endl;
+    for (int i = 0; i < resources->size(); i++)
     {
         std::cout << i + 1 << "\t"
-                  << machines->at(i)->id() << "\t"
-                  << machines->at(i)->jobs().size() << std::endl;
+                  << resources->at(i)->id() << "\t"
+                  << resources->at(i)->jobs().size() << std::endl;
     }
 }
 
-void Simulation_P(std::vector<std::unique_ptr<Machine>> *machines, long t0)
+void Simulation_P(std::vector<std::unique_ptr<Machine>> *resources, long t0)
 {
     // threads for parallel excecution for better runtimes.
     std::vector<std::thread> threads;
-    threads.reserve(machines->size());
+    threads.reserve(resources->size());
     // Simulate on threads.
-    for (int i = 0; i < machines->size() - 1; i++)
+    for (int i = 0; i < resources->size() - 1; i++)
     {
-        threads.push_back(std::thread(Simulate, &machines->at(i)->jobs(), t0));
+        threads.push_back(std::thread(Simulate, &resources->at(i)->jobs(), t0));
     }
     // Simulate last machine on main thread.
-    Simulate(&machines->at(machines->size() - 1)->jobs(), t0);
+    Simulate(&resources->at(resources->size() - 1)->jobs(), t0);
     // Join all threads.
     for (auto &thread : threads)
     {
@@ -112,13 +112,13 @@ void Simulation_P(std::vector<std::unique_ptr<Machine>> *machines, long t0)
     }
 }
 
-void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::unique_ptr<Machine>> *machines)
+void MSPT_rule(std::vector<std::shared_ptr<Job>> *jobs, std::vector<std::unique_ptr<Machine>> *resources)
 {
     SPT_rule(jobs);
 
     for (int i = 0; i < jobs->size(); i++)
     {
-        machines->at(i % machines->size())->jobs().push_back(jobs->at(i));
+        resources->at(i % resources->size())->jobs().push_back(jobs->at(i));
     }
 }
 
