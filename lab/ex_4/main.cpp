@@ -74,22 +74,20 @@ int main(int argc, char const *argv[])
     obj_f = Evaluate(&jobs);
     print_obj_func(obj_f);
     if (table)
-    {
-        print_jobs(&jobs);
         print_resources(&resources);
-    }
 
     return 0;
 }
 
 void print_resources(std::vector<std::unique_ptr<Machine>> *resources)
 {
-    std::cout << "resources\n#\tid\tl" << std::endl;
     for (int i = 0; i < resources->size(); i++)
     {
+        std::cout << "\nresource\n#\tid\tl" << std::endl;
         std::cout << i + 1 << "\t"
                   << resources->at(i)->id() << "\t"
                   << resources->at(i)->jobs().size() << std::endl;
+        print_jobs(&resources->at(i)->jobs());
     }
 }
 
@@ -191,7 +189,7 @@ void SPT_rule(std::vector<std::shared_ptr<Job>> *jobs)
 
 void print_jobs(std::vector<std::shared_ptr<Job>> *jobs)
 {
-    std::cout << "\n#\tid\tstart\ttime\tend\tdue\tlateness" << std::endl;
+    std::cout << "#\tid\tstart\ttime\tend\tdue\tlateness" << std::endl;
     for (std::vector<std::shared_ptr<Job>>::iterator job = jobs->begin(); job != jobs->end(); job++)
     {
         std::cout << std::distance(jobs->begin(), job) + 1 << "\t"
