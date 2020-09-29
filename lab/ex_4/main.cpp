@@ -83,10 +83,10 @@ void print_resources(std::vector<std::unique_ptr<Machine>> *resources)
 {
     for (int i = 0; i < resources->size(); i++)
     {
-        std::cout << "\nresource\n#\tid\tl" << std::endl;
-        std::cout << i + 1 << "\t"
-                  << resources->at(i)->id() << "\t"
-                  << resources->at(i)->jobs().size() << std::endl;
+        std::cout << "\nresource #" << i + 1 << "\nid\tl" << std::endl;
+        std::cout
+            << resources->at(i)->id() << "\t"
+            << resources->at(i)->jobs().size() << std::endl;
         print_jobs(&resources->at(i)->jobs());
     }
 }
