@@ -32,5 +32,4 @@
 *.app
 
 .vscode
-example1
-example3
+example*
