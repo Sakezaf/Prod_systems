@@ -18,9 +18,9 @@
  */
 
 /**
- * Simulate using processing time and schedule.
+ * Simulate using processing time and schedule with Floor Shop model.
  * 
- * @param jobs Vector of unique pointers to jobs. The vector's order gives the schedule.
+ * @param jobs Vector of unique pointers to jobs. The vector's order provides the schedule.
  * @param NR The number of resources
  */
 void Simulation_FS(std::vector<std::unique_ptr<Job>> *jobs, long t0);
@@ -28,7 +28,7 @@ void Simulation_FS(std::vector<std::unique_ptr<Job>> *jobs, long t0);
 /**
  * Print a resource oriented Gantt to the console.
  * 
- * @param jobs Vector of unique pointers to jobs. The vector's order gives the schedule.
+ * @param jobs Vector of unique pointers to jobs. The vector's order provides the schedule.
  * @param NR The number of resources
  */
 void print_Resource_Gantt(std::vector<std::unique_ptr<Job>> *jobs, int NR);
@@ -36,7 +36,7 @@ void print_Resource_Gantt(std::vector<std::unique_ptr<Job>> *jobs, int NR);
 /**
  * Print a job oriented Gantt to the console.
  * 
- * @param jobs Vector of unique pointers to jobs. The vector's order gives the schedule.
+ * @param jobs Vector of unique pointers to jobs. The vector's order provides the schedule.
  * @param NR The number of resources
  */
 void print_Job_Gantt(std::vector<std::unique_ptr<Job>> *jobs, int NR);
