@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -std=gnu++17 -pthread -Wall -fsanitize=leak -fsanitize=address -o
+FLAGS = -std=gnu++17 -pthread -Wall -fsanitize=leak -fsanitize=address -Wextra -Wpedantic -Wno-unused-parameter -o
 FILES = main.cpp models/Task.cpp models/Job.cpp
 PROG = example6
 
