@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 void print_Job_Gantt(std::vector<std::unique_ptr<Job>> *jobs, int NR)
 {
     // jobs
-    for (int i = 0; i < jobs->size(); i++)
+    for (unsigned int i = 0; i < jobs->size(); i++)
     {
         std::cout << "job nr." << i << std::endl;
         std::cout << "#\tmachine\tstart\tproc_t\tend" << std::endl;
@@ -77,7 +77,7 @@ void print_Resource_Gantt(std::vector<std::unique_ptr<Job>> *jobs, int NR)
         std::cout << "resource nr." << r << std::endl;
         std::cout << "#\tjob\tstart\tproc_t\tend" << std::endl;
         // jobs
-        for (int i = 0; i < jobs->size(); i++)
+        for (unsigned int i = 0; i < jobs->size(); i++)
         {
             auto currTask = std::make_shared<Task>(*jobs->at(i)->Tasks().at(r));
             std::cout << i << "\t"
@@ -92,10 +92,10 @@ void print_Resource_Gantt(std::vector<std::unique_ptr<Job>> *jobs, int NR)
 void Simulation_FS(std::vector<std::unique_ptr<Job>> *jobs, long t0)
 {
     // jobs
-    for (int i = 0; i < jobs->size(); i++)
+    for (unsigned int i = 0; i < jobs->size(); i++)
     {
         // resources
-        for (int r = 0; r < jobs->at(i)->Tasks().size(); r++)
+        for (unsigned int r = 0; r < jobs->at(i)->Tasks().size(); r++)
         {
             // create reference to current task
             auto currTask = std::shared_ptr<Task>(jobs->at(i)->Tasks().at(r));

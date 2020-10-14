@@ -1,5 +1,12 @@
+CC = g++
+FLAGS = -std=gnu++17 -pthread -Wall -fsanitize=leak -fsanitize=address -o
+FILES = main.cpp models/Task.cpp models/Job.cpp
+PROG = example6
+
 all: compile run
 compile:
-	g++ -pthread main.cpp models/Task.cpp models/Job.cpp -o example6
+	${CC} ${FILES} ${FLAGS} ${PROG}
 run:
-	./example6
+	./${PROG}
+clean:
+	rm ${PROG}
