@@ -10,7 +10,7 @@
 /**
  * Flow shop model program.
  * Simulating workplaces connected in series,
- * demonstrating a scheduling task for one way, multiple operation tasks.
+ * demonstrating a scheduling task for one way, multiple operation jobs.
  * 
  * Part 1: Modeling and simulation.
  * The Simulation_FS function calculates the start and end times of each process 
@@ -26,6 +26,11 @@
  * second resource's max processing time or
  * the third resource's minimum processing time is longer than the
  * second resource's max processing time.
+ * 
+ * Part 4: Expanding algorithms for Fm | perm | Cmax; m > 3.
+ * For this we can use the Palmer and Dannenbring algorithms.
+ * The optimum cannot be guaranteed.
+ * These problems are NP hard.
  */
 
 /* -------------------------------------------------------------------------- */
@@ -94,3 +99,31 @@ void Johnson_algorithm(std::array<std::shared_ptr<Resource>, 2> resources);
  * @returns True, if the algorithm provides an optimal solution.
  */
 bool Johnson_algorithm_ext(std::array<std::shared_ptr<Resource>, 3> resources);
+
+/* -------------------------------------------------------------------------- */
+/*                                  Part four                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Create schedule in {Fm | perm | Cmax} using the Palmer Algorithm:
+ * 1.) Create Palmer-index 
+ * 2.) Sort by non-ascending Palmer Index
+ * 
+ * The algorithm cannot provide an optimal solution in all cases, because
+ * {Fm | perm | Cmax} is NP hard.
+ * 
+ * @param resources Vector of shared pointers to resources.
+ */
+void Palmer_algorithm(std::vector<std::shared_ptr<Resource>> resources);
+
+/**
+ * Create schedule in {Fm | perm | Cmax} using the Dannenbring Algorithm:
+ * 1.) Create a virtual F2 environment from Fm.
+ * 2.) Use the Johnson algorithm on the F2 environment to create schedule.
+ * 
+ * The algorithm cannot provide an optimal solution in all cases, because
+ * {Fm | perm | Cmax} is NP hard.
+ * 
+ * @param resources Vector of shared pointers to resources.
+ */
+void Dannenbring_algorithm(std::vector<std::shared_ptr<Resource>> resources);

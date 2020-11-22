@@ -80,6 +80,28 @@ int main(int argc, char const *argv[])
         }
         std::cout << "Cmax: " << Evaluate(resources) << std::endl;
     }
+    if (NR > 3)
+    {
+        std::cout << "Palmer algorithm (Fm)" << std::endl;
+        Palmer_algorithm(resources);
+        Simulation_FS(&resources, 0);
+        if (table)
+        {
+            print_Resource_Gantt(&resources);
+            print_Job_Gantt(&resources);
+        }
+        std::cout << "Cmax: " << Evaluate(resources) << std::endl;
+
+        std::cout << "Dannenbring algorithm (Fm)" << std::endl;
+        Dannenbring_algorithm(resources);
+        Simulation_FS(&resources, 0);
+        if (table)
+        {
+            print_Resource_Gantt(&resources);
+            print_Job_Gantt(&resources);
+        }
+        std::cout << "Cmax: " << Evaluate(resources) << std::endl;
+    }
 
     return 0;
 }
@@ -283,4 +305,110 @@ long Evaluate(std::vector<std::shared_ptr<Resource>> resources)
 {
     // Get Cmax with one operation because of Flow Shop
     return resources.back()->Jobs().back()->EndT();
+}
+
+void Palmer_algorithm(std::vector<std::shared_ptr<Resource>> resources)
+{
+    // Palmer index vector
+    std::vector<double> I(resources[0]->Jobs().size());
+
+    std::vector<std::vector<std::shared_ptr<Job>>> jobs;
+    // Calculate Palmer indexes.
+    //$$I_i = -\sum_{j=1}^{m}\left(\frac{m - (2*j-1)}{2}\right)*p_{i,j}; \forall i$$
+    for (unsigned int j = 0; j < resources[0]->Jobs().size(); j++)
+    {
+        std::vector<std::shared_ptr<Job>> tempJobs;
+        double temp = 0.0;
+        int index = resources[0]->Jobs()[j]->id();
+        for (unsigned int r = 0; r < resources.size(); r++)
+        {
+            temp -= resources[r]->Jobs()[j]->ProcT() * ((double)resources.size() - (2 * ((double)r + 1) - 1)) / 2.0;
+            tempJobs.emplace_back(std::move(resources[r]->Jobs()[j]));
+        }
+        I[index] = temp;
+        jobs.emplace_back(std::move(tempJobs));
+    }
+
+    for (auto &resource : resources)
+    {
+        resource->Jobs().clear();
+    }
+
+    std::sort(jobs.begin(), jobs.end(), [&](std::vector<std::shared_ptr<Job>> a, std::vector<std::shared_ptr<Job>> b) { return I[a[0]->id()] > I[b[0]->id()]; });
+
+    for (auto &job : jobs)
+    {
+        for (unsigned int r = 0; r < resources.size(); r++)
+        {
+            resources[r]->Jobs().emplace_back(std::move(job[r]));
+        }
+    }
+}
+
+void Dannenbring_algorithm(std::vector<std::shared_ptr<Resource>> resources)
+{
+    auto jobCount = resources[0]->Jobs().size();
+
+    // Init virtual F2 resources array.
+    std::array<std::shared_ptr<Resource>, 2> virtual_resources;
+    virtual_resources[0] = std::make_shared<Resource>(0, std::vector<std::shared_ptr<Job>>());
+    virtual_resources[1] = std::make_shared<Resource>(1, std::vector<std::shared_ptr<Job>>());
+    virtual_resources[0]->Jobs().reserve(jobCount);
+    virtual_resources[1]->Jobs().reserve(jobCount);
+
+    // Calculate virtual F2 jobs.
+    for (unsigned int i = 0; i < jobCount; i++)
+    {
+        long vr0_proct = 0;
+        for (unsigned int r = 0; r < resources.size(); r++)
+        {
+            vr0_proct += ((long)resources.size() - (long)(r + 1) + 1) * resources[r]->Jobs()[i]->ProcT();
+        }
+        long vr1_proct = 0;
+        for (unsigned int r = 0; r < resources.size(); r++)
+        {
+            vr1_proct += (r + 1) * resources[r]->Jobs()[i]->ProcT();
+        }
+
+        // vpi1 = pi1 + pi2
+        virtual_resources[0]->Jobs().emplace_back(std::make_shared<Job>(i, vr0_proct));
+        // vpi2 = pi2 + pi3
+        virtual_resources[1]->Jobs().emplace_back(std::make_shared<Job>(i, vr1_proct));
+    }
+
+    // Call Johnson alg. with virtual F2 machines.
+    Johnson_algorithm(virtual_resources);
+
+    // Create Fm schedule from virtual F2 schedule.
+    std::vector<std::vector<std::shared_ptr<Job>>> schedule;
+    schedule.reserve(jobCount);
+    for (unsigned int i = 0; i < jobCount; i++)
+    {
+        std::vector<std::shared_ptr<Job>> temp;
+        temp.reserve(jobCount);
+        auto job = virtual_resources[0]->Jobs()[i]->id();
+        for (unsigned int r = 0; r < resources.size(); r++)
+            temp.emplace_back(std::move(resources[r]->Jobs()[job]));
+        // schedule.push_back({std::move(resources[0]->Jobs()[job]), std::move(resources[1]->Jobs()[job]), std::move(resources[2]->Jobs()[job])});
+        schedule.emplace_back(std::move(temp));
+    }
+
+    // Memory manageme
+    for (auto resource : virtual_resources)
+    {
+        resource.reset();
+    }
+    for (auto resource : resources)
+    {
+        resource->Jobs().clear();
+    }
+
+    // push Fm schedule into rescource->Jobs(); for each resource.
+    for (auto job : schedule)
+    {
+        for (unsigned int i = 0; i < resources.size(); i++)
+        {
+            resources[i]->Jobs().emplace_back(std::move(job[i]));
+        }
+    }
 }

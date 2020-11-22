@@ -55,5 +55,6 @@ public:
     auto EndT() const & -> const long & { return EndT_; }
     // Move End time.
     auto EndT() && -> long && { return std::move(EndT_); }
+
 };
 #endif
