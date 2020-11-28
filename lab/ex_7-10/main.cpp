@@ -101,6 +101,16 @@ int main(int argc, char const *argv[])
             print_Job_Gantt(&resources);
         }
         std::cout << "Cmax: " << Evaluate(resources) << std::endl;
+
+        std::cout << "CDS algorithm (Fm)" << std::endl;
+        CDS_algorithm(resources);
+        Simulation_FS(&resources, 0);
+        if (table)
+        {
+            print_Resource_Gantt(&resources);
+            print_Job_Gantt(&resources);
+        }
+        std::cout << "Cmax: " << Evaluate(resources) << std::endl;
     }
 
     return 0;
@@ -389,11 +399,10 @@ void Dannenbring_algorithm(std::vector<std::shared_ptr<Resource>> resources)
         auto job = virtual_resources[0]->Jobs()[i]->id();
         for (unsigned int r = 0; r < resources.size(); r++)
             temp.emplace_back(std::move(resources[r]->Jobs()[job]));
-        // schedule.push_back({std::move(resources[0]->Jobs()[job]), std::move(resources[1]->Jobs()[job]), std::move(resources[2]->Jobs()[job])});
         schedule.emplace_back(std::move(temp));
     }
 
-    // Memory manageme
+    // Memory management
     for (auto resource : virtual_resources)
     {
         resource.reset();
@@ -410,5 +419,52 @@ void Dannenbring_algorithm(std::vector<std::shared_ptr<Resource>> resources)
         {
             resources[i]->Jobs().emplace_back(std::move(job[i]));
         }
+    }
+}
+
+void CDS_algorithm(std::vector<std::shared_ptr<Resource>> resources)
+{
+    // Best result fuction value.
+    long c_best = 0;
+    // Best schedule.
+    std::vector<int> s_best;
+
+    for (unsigned int r = 0; r < resources.size() - 1; r++)
+    {
+        // Array of virtual F2 machines.
+        std::array<std::shared_ptr<Resource>, 2> virtual_resources = {std::make_shared<Resource>(*resources[r]), std::make_shared<Resource>(*resources[r + 1])};
+        // Call Johnson algorithm with virtual F2 environment.
+        Johnson_algorithm(virtual_resources);
+        // Move array into a vector.
+        std::vector<std::shared_ptr<Resource>> virtual_resource_vector{std::make_move_iterator(virtual_resources.begin()), std::make_move_iterator(virtual_resources.end())};
+        // Simulate virtual F2 machines.
+        Simulation_FS(&virtual_resource_vector, 0);
+        // Calculate Cmax.
+        long c_temp = Evaluate(virtual_resource_vector);
+        if (r == 0)
+        {
+            c_best = c_temp;
+            for (auto &job : virtual_resource_vector[0]->Jobs())
+            {
+                s_best.insert(s_best.begin(), job->id());
+            }
+        }
+        else if (c_temp < c_best)
+        {
+            s_best.clear();
+            c_best = c_temp;
+            for (auto &job : virtual_resource_vector[0]->Jobs())
+            {
+                s_best.insert(s_best.begin(), job->id());
+            }
+        }
+    }
+
+    // Sort all jobs on each resource by best schedule.
+    for (auto &resource : resources)
+    {
+        std::sort(resource->Jobs().begin(), resource->Jobs().end(), [&](std::shared_ptr<Job> a, std::shared_ptr<Job> b) {
+            return std::find(s_best.begin(), s_best.end(), a->id()) < std::find(s_best.begin(), s_best.end(), b->id());
+        });
     }
 }
